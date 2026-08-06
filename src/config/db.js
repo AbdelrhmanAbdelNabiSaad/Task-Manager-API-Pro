@@ -4,6 +4,10 @@ const dns = require('dns');
 dns.setServers(['8.8.8.8', '1.1.1.1', '0.0.0.0']);
 const connectDB = async ()=> {
 
+    if(mongoose.connection.readyState === 1) {
+        return;
+    }
+
     try {
         await mongoose.connect(config.dbUrl);
         console.log(`MongoDB Connected successfully.`);
@@ -11,7 +15,7 @@ const connectDB = async ()=> {
 
         console.log(error.message);
 
-        process.exit(1);
+        throw error;
 
     }
 
