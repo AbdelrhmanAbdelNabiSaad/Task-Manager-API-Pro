@@ -1,0 +1,262 @@
+
+---
+
+# Task Manager API Pro
+
+A production-ready RESTful API for task management built with **Node.js**, **Express 5**, and **MongoDB**. It features a complete authentication system (JWT, Email Verification, Forgot/Reset Password) and an advanced task management module with **Soft Delete**, **Favorites**, **Archive**, and **Statistics**. The API is fully documented using **Swagger**.
+
+---
+
+# Features
+
+* User registration with email verification
+* JWT-based authentication
+* Forgot password & password reset using secure temporary tokens
+* Change password for authenticated users
+* Logout and user profile endpoints
+* User roles (`user` / `admin`)
+* Full Task CRUD operations (Create, Read, Update, Delete)
+* Soft Delete with Restore functionality
+* Favorite and Archive tasks
+* Task statistics
+* Search, filtering, sorting, field selection, and pagination
+* Request validation using **express-validator**
+* Centralized error handling
+* Interactive API documentation with Swagger
+* Security and performance middlewares:
+
+  * Helmet
+  * CORS
+  * Compression
+  * Morgan Logging
+
+---
+
+# Tech Stack
+
+| Category           | Technology                             |
+| ------------------ | -------------------------------------- |
+| Runtime            | Node.js                                |
+| Framework          | Express 5                              |
+| Database           | MongoDB + Mongoose 9                   |
+| Authentication     | JSON Web Token (jsonwebtoken) + bcrypt |
+| Validation         | express-validator                      |
+| Email Service      | Nodemailer                             |
+| API Documentation  | swagger-jsdoc + swagger-ui-express     |
+| Security & Logging | helmet, cors, compression, morgan      |
+
+---
+
+# Project Structure
+
+```text
+src/
+├── app.js                     # Express application configuration
+├── server.js                  # Server entry point (Database connection + listen)
+├── config/
+│   ├── env.js                 # Environment variables
+│   ├── db.js                  # MongoDB connection
+│   └── swagger.js             # Swagger configuration
+├── constants/
+│   └── roles.js               # User roles
+├── routes/
+│   ├── auth.route.js          # Authentication routes
+│   └── task.route.js          # Task routes
+├── controllers/
+│   ├── auth.controller.js
+│   └── task.controller.js
+├── middlewares/
+│   ├── protect.middleware.js       # JWT authentication
+│   ├── authorize.middleware.js     # Role authorization
+│   ├── validate.middleware.js      # Validation handler
+│   ├── asyncHandler.middleware.js  # Async error wrapper
+│   └── errorHandler.middleware.js  # Global error handler
+├── services/
+│   ├── email.service.js       # Email service
+│   └── task.service.js        # Task business logic
+├── models/
+│   ├── user.model.js
+│   └── task.model.js
+├── validations/
+│   └── auth.validator.js
+└── utils/
+    └── AppError.js            # Custom error class
+```
+
+---
+
+# Requirements
+
+* Node.js **18+**
+* MongoDB (Local or Atlas)
+* SMTP email account for:
+
+  * Email Verification
+  * Password Reset
+
+---
+
+# Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Run in development mode
+npm run dev
+
+# Run in production mode
+npm start
+```
+
+---
+
+# Environment Variables
+
+Create a `.env` file in the project root and add the following variables:
+
+```env
+PORT=
+APP_NAME=
+MONGO_URL=
+JWT_SECRET=
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_USER=
+EMAIL_PASS=
+EMAIL_FROM=
+BASE_URL=
+```
+
+---
+
+# API Documentation
+
+After starting the server, open:
+
+```text
+http://localhost:<PORT>/api-docs
+```
+
+Swagger provides interactive API documentation where you can test all endpoints directly.
+
+For protected endpoints, authorize using:
+
+```text
+Bearer <your_token>
+```
+
+---
+
+# API Endpoints
+
+## Authentication (`/api/auth`)
+
+| Method | Endpoint                 | Description                      | Protected |
+| ------ | ------------------------ | -------------------------------- | --------- |
+| POST   | `/register`              | Register a new user              | ❌         |
+| POST   | `/login`                 | User login                       | ❌         |
+| POST   | `/logout`                | User logout                      | ✅         |
+| GET    | `/verify-email/:token`   | Verify email address             | ❌         |
+| POST   | `/forgot-password`       | Request password reset           | ❌         |
+| PATCH  | `/reset-password/:token` | Reset password                   | ❌         |
+| PATCH  | `/change/password`       | Change current password          | ✅         |
+| GET    | `/profile`               | Get authenticated user's profile | ✅         |
+
+---
+
+## Tasks (`/api/tasks`)
+
+| Method | Endpoint        | Description                                                                          | Protected |
+| ------ | --------------- | ------------------------------------------------------------------------------------ | --------- |
+| POST   | `/`             | Create a new task                                                                    | ✅         |
+| GET    | `/`             | Get all tasks (supports pagination, filtering, search, sorting, and field selection) | ✅         |
+| GET    | `/statistics`   | Get task statistics                                                                  | ✅         |
+| GET    | `/favorites`    | Get favorite tasks                                                                   | ✅         |
+| GET    | `/archive`      | Get archived tasks                                                                   | ✅         |
+| GET    | `/:id`          | Get a single task                                                                    | ✅         |
+| PATCH  | `/:id`          | Update a task                                                                        | ✅         |
+| PATCH  | `/:id/restore`  | Restore a soft-deleted task                                                          | ✅         |
+| PATCH  | `/:id/favorite` | Toggle favorite status                                                               | ✅         |
+| PATCH  | `/:id/archive`  | Toggle archive status                                                                | ✅         |
+| DELETE | `/:id`          | Soft delete a task                                                                   | ✅         |
+
+> **Protected routes require the following header:**
+
+```http
+Authorization: Bearer <token>
+```
+
+---
+
+# Data Models
+
+## User
+
+```text
+name
+email
+password (hashed using bcrypt)
+role (user | admin)
+isVerified
+passwordResetToken
+emailVerificationToken
+```
+
+## Task
+
+```text
+title
+description
+status (pending | in-progress | completed)
+priority (low | medium | high)
+dueDate
+category
+isFavorite
+isArchived
+isDeleted
+user (reference to the task owner)
+```
+
+---
+
+# Error Handling
+
+All API errors follow a consistent response format:
+
+```json
+{
+  "success": false,
+  "status": "Fail",
+  "message": "..."
+}
+```
+
+The API also automatically converts common Mongoose and JWT errors into clear, user-friendly responses, including:
+
+* Invalid MongoDB ObjectId
+* Duplicate email address
+* Mongoose validation errors
+* Invalid or expired JWT
+* Authentication and authorization errors
+
+---
+
+## Highlights
+
+* Production-ready project structure
+* RESTful API design
+* JWT Authentication
+* Email Verification
+* Password Reset
+* Soft Delete & Restore
+* Favorites & Archive
+* Task Statistics
+* Search, Filter, Sort & Pagination
+* Swagger API Documentation
+* Centralized Error Handling
+* Secure and scalable architecture
+
+---
+
+This version is polished and follows the style commonly seen in professional GitHub repositories.
