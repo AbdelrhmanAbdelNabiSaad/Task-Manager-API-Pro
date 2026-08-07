@@ -9,7 +9,7 @@ const options = {
             description: 'Production Ready Task Manager API'
         },
          servers: [
-             { url: "/api", description: 'Production Server' },
+             { url: "https://task-manager-api-pro.vercel.app", description: 'Production Server' },
             {
                 url: "http://localhost:3000/api",
                 description: 'Local Server'
