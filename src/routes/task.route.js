@@ -255,7 +255,6 @@ router.patch('/:id/restore', protect, asyncHandler(restoreTask));
  *         description: Task ID
  *         schema:
  *           type: string
- *           example: 6893d7e6f5d2b2c5b1d2a111
  *     responses:
  *       200:
  *         description: Favorite status updated successfully
@@ -294,7 +293,6 @@ router.patch('/:id/favorite', protect, asyncHandler(toggleFavorite));
  *         description: Task ID
  *         schema:
  *           type: string
- *           example: 6893d7e6f5d2b2c5b1d2a111
  *     responses:
  *       200:
  *         description: Archive status updated successfully

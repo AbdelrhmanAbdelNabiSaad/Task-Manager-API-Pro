@@ -64,6 +64,7 @@ const register = async(req,res)=> {
         success: true,
         message: 'Registration successful. Please check your email to verify your account.',
         data: newUser,
+        verificationToken: verificationToken
     })
 
 }

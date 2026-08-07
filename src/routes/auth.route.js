@@ -41,7 +41,7 @@ const {
  *             properties:
  *               email:
  *                 type: string
- *                 example: abdo@gmail.com
+ *                 example: abdelrhmansaad127@gmail.com
  *               password:
  *                 type: string
  *                 example: As123456
@@ -71,14 +71,18 @@ router.post("/login", loginValidation, asyncHandler(login));
  *               - name
  *               - email
  *               - password
+ *               - confirmPassword
  *             properties:
  *               name:
  *                 type: string
  *                 example: Abdelrhman
  *               email:
  *                 type: string
- *                 example: abdo@gmail.com
+ *                 example: abdelrhmansaad127@gmail.com
  *               password:
+ *                 type: string
+ *                 example: As123456
+ *               confirmPassword:
  *                 type: string
  *                 example: As123456
  *     responses:
